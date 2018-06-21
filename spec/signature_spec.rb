@@ -3,9 +3,9 @@ require 'dafiti/signature'
 
 RSpec.describe Dafiti::Signature do
   TEST_SIGNATURE = '3ceb8ed91049dfc718b0d2d176fb2ed0e5fd74f76c5971f34cdab48412476041'.freeze
-  TEST_TIME = '2015-07-01T11:11:11+00:00'.freeze
+  let(:test_time) { '2015-07-01T11:11:11+00:00' }
 
-  let(:now) { Time.parse(TEST_TIME) }
+  let(:now) { Time.parse(test_time) }
   let(:signature) do
     described_class.new(
       api_key: 'b1bdb357ced10fe4e9a69840cdd4f0e9c03d77fe',

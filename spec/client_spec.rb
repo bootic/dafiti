@@ -2,8 +2,8 @@ require 'spec_helper'
 require 'dafiti'
 
 RSpec.describe Dafiti::Client do
-  TEST_TIME = '2015-07-01T11:11:11+00:00'.freeze
   Action = Struct.new(:verb, :body, :params)
+  let(:test_time) { '2015-07-01T11:11:11+00:00' }
   let(:success_response) do
     %({
       "SuccessResponse": {
@@ -18,7 +18,7 @@ RSpec.describe Dafiti::Client do
     })
   end
 
-  let(:now) { Time.parse(TEST_TIME) }
+  let(:now) { Time.parse(test_time) }
 
   before do
     allow(Time).to receive(:now).and_return now
