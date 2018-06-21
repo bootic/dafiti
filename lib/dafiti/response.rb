@@ -2,6 +2,16 @@ require 'json'
 require 'time'
 
 module Dafiti
+  DafitiError = Class.new(StandardError)
+
+  class ServerError < DafitiError
+    attr_reader :response
+    def initialize(response)
+      @response = response
+      super "HTTP Server error status #{response.code}"
+    end
+  end
+
   class Response
     JSON_MIME = /application\/json/.freeze
     VALID_STATUSES = (200..299).freeze
@@ -10,7 +20,10 @@ module Dafiti
 
     def self.instance(response)
       http_ok = VALID_STATUSES.include?(response.code.to_i)
-      # if not http ok should not even try to parse body, could be anything. Raise?
+      if !http_ok
+        raise ServerError.new(response)
+      end
+
       data = if response.content_type =~ JSON_MIME
         body = response.body.to_s
         body.strip == '' ? {}: JSON.parse(body, symbolize_names: true)
@@ -18,7 +31,7 @@ module Dafiti
         {}
       end
 
-      if http_ok && data.key?(SUCCESS_KEY)
+      if data.key?(SUCCESS_KEY)
         SuccessResponse.new(response, data)
       else
         ErrorResponse.new(response, data)
