@@ -2,6 +2,7 @@ require 'time'
 require 'cgi'
 require 'openssl'
 
+# https://sellerapi.sellercenter.net/docs/signing-requests
 module Dafiti
   class Signature
     API_VERSION = '1.0'.freeze
