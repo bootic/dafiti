@@ -1,8 +1,16 @@
 module Dafiti
   module Actions
     class Action
+      def initialize(payload = {})
+        @payload = payload.each_with_object({}) do |(k, v), o|
+          o[k.to_s] = v
+        end
+      end
+
       def params
-        {'Action' => action_name}
+        @payload.merge(
+          'Action' => action_name
+        )
       end
 
       def body

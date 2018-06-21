@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'dafiti/actions/feed_list'
 
 RSpec.describe Dafiti::Actions::FeedList do
   it "works" do
