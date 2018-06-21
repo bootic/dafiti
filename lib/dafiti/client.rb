@@ -21,26 +21,26 @@ module Dafiti
       @base_url = base_url
     end
 
-    def request(req, &block)
+    def request(action, &block)
       uri = URI.parse(base_url)
       signature = Signature.new(
         api_key: api_key,
         user_id: user_id,
-        params: req.params.merge(DEFAULT_PARAMS)
+        params: action.params.merge(DEFAULT_PARAMS)
       )
 
       uri.query = signature.query_string
 
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      request = HTTP_METHODS.fetch(req.verb).new(uri.request_uri)
+      request = HTTP_METHODS.fetch(action.verb).new(uri.request_uri)
       request['Content-Type'] = CONTENT_TYPE
       request['User-Agent'] = UA
       if uri.user && uri.password
         request.basic_auth uri.user, uri.password
       end
-      if req.body
-        request.body = req.body.to_s
+      if action.body
+        request.body = action.body.to_s
       end
       yield(request) if block_given?
 
