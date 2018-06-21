@@ -4,4 +4,4 @@ module Dafiti
   # Your code goes here...
 end
 
-# require "dafiti/client"
+require "dafiti/client"
