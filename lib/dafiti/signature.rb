@@ -6,50 +6,33 @@ module Dafiti
   class Signature
     API_VERSION = '1.0'.freeze
 
-    def self.generate_query(api_key:, user_id:, params: {})
-      new(api_key, user_id).query(params)
-    end
+    attr_reader :params
 
-    def self.signature(api_key:, user_id:, params: {})
-      new(api_key, user_id).signature(params)
-    end
-
-    def initialize(api_key, user_id)
+    def initialize(api_key:, user_id:, params: {})
       @api_key, @user_id = api_key, user_id
-    end
-
-    def query(params)
-      now = Time.now.iso8601
       base = {
         'UserID' => user_id,
         'Version' => API_VERSION,
-        'Timestamp' => now
+        'Timestamp' => Time.now.iso8601
       }
-      params = base.merge(params).sort.to_h # sorted by keys
-      encoded = params.map {|k, v|
-        "#{CGI.escape(k.to_s)}=#{CGI.escape(v.to_s)}"
-      }.join('&')
-
-      sign = OpenSSL::HMAC.hexdigest('SHA256', api_key, encoded)
-      [encoded, "Signature=#{CGI.escape(sign)}"].join('&')
+      @params = base.merge(params).sort.to_h
     end
 
-    def signature(params)
-      now = Time.now.iso8601
-      base = {
-        'UserID' => user_id,
-        'Version' => API_VERSION,
-        'Timestamp' => now
-      }
-      params = base.merge(params).sort.to_h # sorted by keys
-      encoded = params.map {|k, v|
-        "#{CGI.escape(k.to_s)}=#{CGI.escape(v.to_s)}"
-      }.join('&')
+    def signature
+      @signature ||= CGI.escape OpenSSL::HMAC.hexdigest('SHA256', api_key, encoded)
+    end
 
-      CGI.escape OpenSSL::HMAC.hexdigest('SHA256', api_key, encoded)
+    def query_string
+      [encoded, "Signature=#{signature}"].join('&')
     end
 
     private
     attr_reader :api_key, :user_id
+
+    def encoded
+      @encoded ||= params.map {|k, v|
+        "#{CGI.escape(k.to_s)}=#{CGI.escape(v.to_s)}"
+      }.join('&')
+    end
   end
 end

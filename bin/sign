@@ -5,21 +5,19 @@ require "dafiti/signature"
 URL = 'https://rocket:rock4me@sellercenter-staging-api.dafiti.cl'
 
 user_id, api_key, * = ARGV
-
-q = Dafiti::Signature.generate_query(
+params = {
+  'Action' => 'FeedList',#'GetProducts',
+  'Format' => 'XML',
+  'Timestamp' => '2015-07-01T11:11:11+00:00'
+}
+s = Dafiti::Signature.new(
   api_key: api_key,
   user_id: user_id,
-  params: {
-    'Action' => 'GetProducts',#'GetProducts',
-    'Format' => 'JSON',
-    'Filter' => 'all',
-    # 'Timestamp' => '2015-07-01T11:11:11+00:00'
-  }
+  params: params
 )
-# puts q
-# puts (q == '3ceb8ed91049dfc718b0d2d176fb2ed0e5fd74f76c5971f34cdab48412476041')
-
-cmd = %(curl -i "#{URL}?#{q}")
+puts s.signature
+puts (s.signature == '3ceb8ed91049dfc718b0d2d176fb2ed0e5fd74f76c5971f34cdab48412476041')
+cmd = %(curl -i "#{URL}?#{s.query_string}")
 puts cmd
 puts ''
 puts `#{cmd}`
