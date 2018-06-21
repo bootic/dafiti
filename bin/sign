@@ -1,23 +1,43 @@
 #!/usr/bin/env ruby
 
 require "bundler/setup"
-require "dafiti/signature"
+require "dafiti/client"
+require 'byebug'
 URL = 'https://rocket:rock4me@sellercenter-staging-api.dafiti.cl'
+Action = Struct.new(:verb, :body, :params)
 
 user_id, api_key, * = ARGV
-params = {
-  'Action' => 'FeedList',#'GetProducts',
-  'Format' => 'XML',
-  'Timestamp' => '2015-07-01T11:11:11+00:00'
-}
-s = Dafiti::Signature.new(
+# params = {
+#   'Action' => 'FeedList',#'GetProducts',
+#   'Format' => 'JSON',
+# }
+c = Dafiti::Client.new(
   api_key: api_key,
   user_id: user_id,
-  params: params
+  base_url: URL,
 )
-puts s.signature
-puts (s.signature == '3ceb8ed91049dfc718b0d2d176fb2ed0e5fd74f76c5971f34cdab48412476041')
-cmd = %(curl -i "#{URL}?#{s.query_string}")
-puts cmd
-puts ''
-puts `#{cmd}`
+action = Action.new(
+  :get,
+  nil,
+  {
+    # 'Action' => 'GetProducts',
+    # 'Filter' => 'all',
+    'Action' => 'FeedList'
+  }
+)
+resp = c.request(action)
+byebug
+puts resp.code.inspect
+puts resp.inspect
+
+# s = Dafiti::Signature.new(
+#   api_key: api_key,
+#   user_id: user_id,
+#   params: params
+# )
+# puts s.signature
+# puts (s.signature == '3ceb8ed91049dfc718b0d2d176fb2ed0e5fd74f76c5971f34cdab48412476041')
+# cmd = %(curl -i "#{URL}?#{s.query_string}")
+# puts cmd
+# puts ''
+# puts `#{cmd}`
