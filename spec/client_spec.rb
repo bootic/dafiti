@@ -44,7 +44,7 @@ RSpec.describe Dafiti::Client do
   end
 
   it "works" do
-    stub_request(:get, "https://sellercenter.dafiti.cl/?Action=Feedlist&Format=JSON&Signature=0b5bbfd36b672577e04c5b0f1b33c70ac10c585d8c08339f782fcb501b529d68&Timestamp=2015-07-01T11:11:11%2B00:00&UserID=look@me.com&Version=1.0").
+    stub_feedlist.
       with(headers: {'Content-Type' => 'application/x-www-form-urlencoded'}).
       to_return(
         status: 200,
@@ -74,7 +74,7 @@ RSpec.describe Dafiti::Client do
       base_url: 'https://foo:bar@sellercenter.dafiti.cl'
     )
 
-    stub_request(:get, "https://sellercenter.dafiti.cl/?Action=Feedlist&Format=JSON&Signature=0b5bbfd36b672577e04c5b0f1b33c70ac10c585d8c08339f782fcb501b529d68&Timestamp=2015-07-01T11:11:11%2B00:00&UserID=look@me.com&Version=1.0").
+    stub_feedlist.
       with(basic_auth: ['foo', 'bar']).
       to_return(
         status: 200,
@@ -95,7 +95,7 @@ RSpec.describe Dafiti::Client do
   end
 
   it "POSTs XML payload if action supports it" do
-    stub_request(:post, "https://sellercenter.dafiti.cl/?Action=ProductUpdate&Format=JSON&Signature=e601cd399a0a2b27cc214e489f115ef9d2ae0e9b735813fb6062f9766d17579e&Timestamp=2015-07-01T11:11:11%2B00:00&UserID=look@me.com&Version=1.0").
+    stub_product_udpate.
       with(headers: {'Content-Type' => 'application/x-www-form-urlencoded'}, body: post_body).
       to_return(
         status: 200,
@@ -116,7 +116,7 @@ RSpec.describe Dafiti::Client do
   end
 
   it "raises if status code not successful" do
-    stub_request(:get, "https://sellercenter.dafiti.cl/?Action=Feedlist&Format=JSON&Signature=0b5bbfd36b672577e04c5b0f1b33c70ac10c585d8c08339f782fcb501b529d68&Timestamp=2015-07-01T11:11:11%2B00:00&UserID=look@me.com&Version=1.0").
+    stub_feedlist.
       with(headers: {'Content-Type' => 'application/x-www-form-urlencoded'}).
       to_return(
         status: 500,
@@ -135,5 +135,13 @@ RSpec.describe Dafiti::Client do
     expect {
       client.request(action)
     }.to raise_error Dafiti::ServerError
+  end
+
+  def stub_feedlist
+    stub_request(:get, "https://sellercenter.dafiti.cl/?Action=Feedlist&Format=JSON&Signature=0b5bbfd36b672577e04c5b0f1b33c70ac10c585d8c08339f782fcb501b529d68&Timestamp=2015-07-01T11:11:11%2B00:00&UserID=look@me.com&Version=1.0")
+  end
+
+  def stub_product_udpate
+    stub_request(:post, "https://sellercenter.dafiti.cl/?Action=ProductUpdate&Format=JSON&Signature=e601cd399a0a2b27cc214e489f115ef9d2ae0e9b735813fb6062f9766d17579e&Timestamp=2015-07-01T11:11:11%2B00:00&UserID=look@me.com&Version=1.0")
   end
 end
