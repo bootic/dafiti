@@ -1,8 +1,39 @@
 # Dafiti
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/dafiti`. To experiment with that code, run `bin/console` for an interactive prompt.
+A Ruby client for Dafiti/Seller Center's HTTP API.
 
-TODO: Delete this and the text above, and describe your gem
+https://sellerapi.sellercenter.net/docs/getting-started
+
+## Usage
+
+```ruby
+require 'dafiti'
+
+# instantiate the client with your credentials
+client = Dafiti::Client.new(
+  api_key: 'dedededefrfedwdw',
+  user_id: 'user@me.com'
+)
+
+# Actions respond to :verb, :body, :params. params['Action'] maps to Dafiti's available actions.
+Action = Struct.new(:verb, :body, :params)
+
+# an action
+# POST actions will build XML #body
+fee_list = Action.new(
+  :get,
+  nil,
+  {'Action' => 'FeedList'}
+)
+
+resp = client.request(feed_list)
+resp.head # Hash
+resp.body # Hash
+```
+
+## ToDO
+
+* Implement all actions needed
 
 ## Installation
 
@@ -19,10 +50,6 @@ And then execute:
 Or install it yourself as:
 
     $ gem install dafiti
-
-## Usage
-
-TODO: Write usage instructions here
 
 ## Development
 
