@@ -16,15 +16,10 @@ client = Dafiti::Client.new(
 )
 
 # Actions respond to :verb, :body, :params. params['Action'] maps to Dafiti's available actions.
-Action = Struct.new(:verb, :body, :params)
 
 # an action
 # POST actions will build XML #body
-fee_list = Action.new(
-  :get,
-  nil,
-  {'Action' => 'FeedList'}
-)
+feed_list = Dafiti::Actions::GetProducts.new(
 
 resp = client.request(feed_list)
 resp.head # Hash
