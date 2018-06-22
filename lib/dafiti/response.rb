@@ -71,9 +71,17 @@ module Dafiti
       JSON.pretty_generate(data)
     end
 
+    def inspect
+      %(<#{self.class}:#{object_id} code=#{code} request_action="#{request_action}" #{inspect_line} body=#{body.inspect}>)
+    end
+
     private
     def top_level_key
       SUCCESS_KEY
+    end
+
+    def inspect_line
+      ''
     end
   end
 
@@ -88,6 +96,11 @@ module Dafiti
 
     def timestamp
       @timestamp ||= Time.parse(head.fetch(:Timestamp))
+    end
+
+    private
+    def inspect_line
+      %(request_id="#{request_id}" response_type="#{response_type}" timestamp=#{head[:Timestamp]})
     end
   end
 
@@ -112,6 +125,10 @@ module Dafiti
     private
     def top_level_key
       ERROR_KEY
+    end
+
+    def inspect_line
+      %(error_type="#{error_type}" error_code="#{error_code}" error_message="#{error_message}")
     end
   end
 end

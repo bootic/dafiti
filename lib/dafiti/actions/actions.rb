@@ -25,6 +25,10 @@ module Dafiti
         nil
       end
 
+      def inspect
+        %(<#{self.class}:#{object_id} [#{verb}] params=#{params.inspect}>)
+      end
+
       private
       attr_reader :query
 
