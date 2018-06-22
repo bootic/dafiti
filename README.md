@@ -66,6 +66,24 @@ user_id: user@me.com
 base_url: https://user:pwd@sellercenter-staging-api.dafiti.cl
 ```
 
+## Script runner
+
+Put your credentials in `.config.yml` (see "Dev console" above). Now run arbitrary scripts with
+
+```
+bin/run my_script.rb
+```
+
+A `client` object will be available in your scripts. Example:
+
+```ruby
+# my_script.rb
+feed_list = Dafiti::Actions::FeedList.new
+resp = client.request(feed_list)
+
+puts resp.body
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/bootic/dafiti.
