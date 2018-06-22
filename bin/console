@@ -2,13 +2,35 @@
 
 require "bundler/setup"
 require "dafiti"
-
-# You can add fixtures and/or initialization code here to make experimenting
-# with your gem easier. You can also use a different console, if you like.
-
-# (If you use this, don't forget to add pry to your Gemfile!)
-# require "pry"
-# Pry.start
-
 require "irb"
-IRB.start(__FILE__)
+
+Context = Struct.new(:client)
+config_file = File.join(Dir.pwd, '.config.yml')
+if !File.exists?(config_file)
+  puts "Add credentials to #{config_file} to start a working client in this console"
+  IRB.start(__FILE__)
+else
+  require 'yaml'
+  config = YAML.load_file(config_file)
+  client = Dafiti::Client.new(
+    api_key: config.fetch(:api_key),
+    user_id: config.fetch(:user_id),
+    base_url: config.fetch(:base_url)
+  )
+  puts "configured 'client' instance with credentials in #{config_file}"
+  IRB.setup nil
+  IRB.conf[:MAIN_CONTEXT] = IRB::Irb.new.context
+  require 'irb/ext/multi-irb'
+  prompt = "/dafiti (#{config[:user_id]}) $ "
+  IRB.conf[:PROMPT][:CUSTOM] = {
+    :PROMPT_I => prompt,
+    :PROMPT_S => "%l>> ",
+    :PROMPT_C => prompt,
+    :PROMPT_N => prompt,
+    :RETURN => "=> %s\n"
+  }
+  IRB.conf[:PROMPT_MODE] = :CUSTOM
+  IRB.conf[:AUTO_INDENT] = false
+  IRB.irb nil, Context.new(client)
+end
+

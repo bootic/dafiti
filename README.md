@@ -52,6 +52,20 @@ After checking out the repo, run `bin/setup` to install dependencies. Then, run 
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
+## Dev console
+
+`bin/console` puts you in an IRB session with all classes loaded.
+
+If you add a `.config.yml` file with your credentials to the root of this project, `bin/console` includes a configured `Dafiti::Client` to play with.
+
+Example `.config.yml`:
+
+```yaml
+api_key: exampleapikey
+user_id: user@me.com
+base_url: https://user:pwd@sellercenter-staging-api.dafiti.cl
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/bootic/dafiti.
