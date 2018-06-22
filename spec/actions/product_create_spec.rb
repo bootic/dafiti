@@ -65,8 +65,4 @@ RSpec.describe Dafiti::Actions::ProductCreate do
   </Product>
 </Request>))
   end
-
-  def expect_equal_xml(a, b)
-    expect(a.gsub("\n", '')).to eq b.gsub("\n", '')
-  end
 end

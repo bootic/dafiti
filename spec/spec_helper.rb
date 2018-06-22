@@ -13,4 +13,8 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  def expect_equal_xml(a, b)
+    expect(a.gsub("\n", '')).to eq b.gsub("\n", '')
+  end
 end
