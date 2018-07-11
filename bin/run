@@ -4,7 +4,7 @@ require "bundler/setup"
 require "dafiti"
 require 'byebug'
 
-Context = Struct.new(:client)
+Context = Struct.new(:session)
 
 target = ARGV[0]
 raise "usage: bin/run some_file.rb" unless target
@@ -15,11 +15,11 @@ if !File.exists?(config_file)
 else
   require 'yaml'
   config = YAML.load_file(config_file)
-  client = Dafiti::Client.new(
+  sess = Dafiti.session(
     api_key: config.fetch(:api_key),
     user_id: config.fetch(:user_id),
     base_url: config.fetch(:base_url)
   )
-  context = Context.new(client)
+  context = Context.new(sess)
   context.instance_eval File.read(target), target
 end

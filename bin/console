@@ -4,7 +4,7 @@ require "bundler/setup"
 require "dafiti"
 require "irb"
 
-Context = Struct.new(:client)
+Context = Struct.new(:session)
 config_file = File.join(Dir.pwd, '.config.yml')
 if !File.exists?(config_file)
   puts "Add credentials to #{config_file} to start a working client in this console"
@@ -12,7 +12,7 @@ if !File.exists?(config_file)
 else
   require 'yaml'
   config = YAML.load_file(config_file)
-  client = Dafiti::Client.new(
+  sess = Dafiti.session(
     api_key: config.fetch(:api_key),
     user_id: config.fetch(:user_id),
     base_url: config.fetch(:base_url)
@@ -31,6 +31,6 @@ else
   }
   IRB.conf[:PROMPT_MODE] = :CUSTOM
   IRB.conf[:AUTO_INDENT] = false
-  IRB.irb nil, Context.new(client)
+  IRB.irb nil, Context.new(sess)
 end
 
