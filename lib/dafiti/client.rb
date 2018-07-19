@@ -2,7 +2,7 @@ require 'net/http'
 require 'uri'
 require_relative './version'
 require_relative './signature'
-require_relative './response'
+require_relative './responses'
 
 module Dafiti
   class Client
@@ -45,7 +45,7 @@ module Dafiti
       yield(request) if block_given?
 
       response = http.request(request)
-      Response.instance(response)
+      Responses::Response.instance(response)
     end
 
     private

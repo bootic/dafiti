@@ -1,7 +1,7 @@
 require 'spec_helper'
-require 'dafiti/response'
+# require 'dafiti/response'
 
-RSpec.describe Dafiti::Response do
+RSpec.describe Dafiti::Responses::Response do
   HTTP_RESPONSE = Struct.new(:code, :content_type, :body)
   SUCCESS_RESPONSE = %({
     "SuccessResponse": {
@@ -47,7 +47,7 @@ RSpec.describe Dafiti::Response do
         SUCCESS_RESPONSE
       )
       resp = described_class.instance(http)
-      expect(resp).to be_a Dafiti::SuccessResponse
+      expect(resp).to be_a Dafiti::Responses::SuccessResponse
       expect(resp.ok?).to be true
       expect(resp.code).to eq 200
       expect(resp.request_id).to eq '123'
@@ -66,7 +66,7 @@ RSpec.describe Dafiti::Response do
         ERROR_RESPONSE
       )
       resp = described_class.instance(http)
-      expect(resp).to be_a Dafiti::ErrorResponse
+      expect(resp).to be_a Dafiti::Responses::ErrorResponse
       expect(resp.ok?).to be false
       expect(resp.code).to eq 200
       expect(resp.request_action).to eq 'Price'

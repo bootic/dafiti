@@ -61,10 +61,60 @@ RSpec.describe Dafiti::Client do
     )
 
     resp = client.request(action)
-    expect(resp).to be_a Dafiti::SuccessResponse
+    expect(resp).to be_a Dafiti::Responses::SuccessResponse
     expect(resp.request_action).to eq 'FeedList'
     expect(resp.response_type).to eq 'Feed'
     expect(resp.body).to eq({})
+  end
+
+  it "wraps response in registered class, if any" do
+    json_response = %({
+      "SuccessResponse": {
+        "Head": {
+          "RequestId": "",
+          "RequestAction": "FeedStatus",
+          "ResponseType": "FeedDetail",
+          "Timestamp": "2018-06-21T12:33:05-0400"
+        },
+        "Body": {
+          "FeedDetail": {
+            "Feed": "feed123",
+            "Status": "Finished",
+            "FailedRecords": 1,
+            "FeedErrors": {
+              "Error": [
+                {"Code": "0", "Message": "nope1", "SellerSku": "SKU1"},
+                {"Code": "1", "Message": "nope2", "SellerSku": "SKU1"}
+              ]
+            }
+          }
+        }
+      }
+    })
+
+    stub_feedstatus.
+      with(headers: {'Content-Type' => 'application/x-www-form-urlencoded'}).
+      to_return(
+        status: 200,
+        headers: {'Content-Type' => 'application/json'},
+        body: json_response,
+      )
+
+    action = Action.new(
+      :get,
+      nil,
+      {
+        'Action' => 'FeedStatus'
+      }
+    )
+
+    resp = client.request(action)
+    expect(resp).to be_a Dafiti::Responses::FeedDetail
+    expect(resp.request_action).to eq 'FeedStatus'
+    expect(resp.response_type).to eq 'FeedDetail'
+    expect(resp.status).to eq 'Finished'
+    expect(resp.body[:FeedDetail][:Feed]).to eq('feed123')
+    expect(resp.errors[0][:Message]).to eq 'nope1'
   end
 
   it "uses Basic Auth, if URL includes credentials" do
@@ -91,7 +141,7 @@ RSpec.describe Dafiti::Client do
     )
 
     resp = client.request(action)
-    expect(resp).to be_a Dafiti::SuccessResponse
+    expect(resp).to be_a Dafiti::Responses::SuccessResponse
   end
 
   it "POSTs XML payload if action supports it" do
@@ -112,7 +162,7 @@ RSpec.describe Dafiti::Client do
     )
 
     resp = client.request(action)
-    expect(resp).to be_a Dafiti::SuccessResponse
+    expect(resp).to be_a Dafiti::Responses::SuccessResponse
   end
 
   it "raises if status code not successful" do
@@ -139,6 +189,10 @@ RSpec.describe Dafiti::Client do
 
   def stub_feedlist
     stub_request(:get, "https://sellercenter.dafiti.cl/?Action=Feedlist&Format=JSON&Signature=0b5bbfd36b672577e04c5b0f1b33c70ac10c585d8c08339f782fcb501b529d68&Timestamp=2015-07-01T11:11:11%2B00:00&UserID=look@me.com&Version=1.0")
+  end
+
+  def stub_feedstatus
+    stub_request(:get, "https://sellercenter.dafiti.cl/?Action=FeedStatus&Format=JSON&Signature=3bd6b0a4f47ec743b18b182cc53ef13226a6a3cea18127923eb77e13c9dc302d&Timestamp=2015-07-01T11:11:11%2B00:00&UserID=look@me.com&Version=1.0")
   end
 
   def stub_product_udpate
