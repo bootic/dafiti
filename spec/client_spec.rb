@@ -117,6 +117,48 @@ RSpec.describe Dafiti::Client do
     expect(resp.errors[0][:Message]).to eq 'nope1'
   end
 
+  it "wraps errors correctly" do
+    json_response = %({
+      "SuccessResponse": {
+        "Head": {
+          "RequestId": "",
+          "RequestAction": "FeedStatus",
+          "ResponseType": "FeedDetail",
+          "Timestamp": "2018-06-21T12:33:05-0400"
+        },
+        "Body": {
+          "FeedDetail": {
+            "Feed": "feed123",
+            "Status": "Finished",
+            "FailedRecords": 1,
+            "FeedErrors": {
+              "Error": {"Code": "0", "Message": "nope1", "SellerSku": "SKU1"}
+            }
+          }
+        }
+      }
+    })
+
+    stub_feedstatus.
+      with(headers: {'Content-Type' => 'application/x-www-form-urlencoded'}).
+      to_return(
+        status: 200,
+        headers: {'Content-Type' => 'application/json'},
+        body: json_response,
+      )
+
+    action = Action.new(
+      :get,
+      nil,
+      {
+        'Action' => 'FeedStatus'
+      }
+    )
+
+    resp = client.request(action)
+    expect(resp.errors[0][:Message]).to eq 'nope1'
+  end
+
   it "uses Basic Auth, if URL includes credentials" do
     client = described_class.new(
       api_key: 'b1bdb357ced10fe4e9a69840cdd4f0e9c03d77fe',

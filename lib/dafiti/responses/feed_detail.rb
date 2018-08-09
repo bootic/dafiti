@@ -7,7 +7,10 @@ module Dafiti
       end
 
       def errors
-        @errors ||= Array(detail.fetch(:FeedErrors, {}).fetch(:Error, []))
+        @errors ||= (
+          errs = detail.fetch(:FeedErrors, {}).fetch(:Error, [])
+          errs.is_a?(Array) ? errs : [errs]
+        )
       end
 
       private
