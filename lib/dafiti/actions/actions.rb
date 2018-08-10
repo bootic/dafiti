@@ -47,7 +47,7 @@ module Dafiti
 
     class Post < Action
       def initialize(payload = {})
-        @payload = [payload].flatten
+        @payload = prepare_payload(payload)
       end
 
       def verb
@@ -68,6 +68,12 @@ module Dafiti
 
       def query
         {}
+      end
+
+      # NOOP. Some actions will have to prepare/cleanup payload
+      # before request
+      def prepare_payload(pld)
+        pld
       end
 
       # turn a Ruby Hash into a Builder::XmlMarkup object, recursively

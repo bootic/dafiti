@@ -15,6 +15,10 @@ RSpec.configure do |config|
   end
 
   def expect_equal_xml(a, b)
-    expect(a.gsub("\n", '')).to eq b.gsub("\n", '')
+    expect(strip_xml(a)).to eq strip_xml(b)
+  end
+
+  def strip_xml(xml)
+    xml.gsub("\n", '').gsub(/>\s+</, '><')
   end
 end
