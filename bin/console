@@ -17,7 +17,7 @@ else
     user_id: config.fetch(:user_id),
     base_url: config.fetch(:base_url)
   )
-  puts "configured 'client' instance with credentials in #{config_file}"
+  puts "configured 'session' instance with credentials in #{config_file}"
   IRB.setup nil
   IRB.conf[:MAIN_CONTEXT] = IRB::Irb.new.context
   require 'irb/ext/multi-irb'
