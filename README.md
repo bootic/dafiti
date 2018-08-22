@@ -9,6 +9,72 @@ https://sellerapi.sellercenter.net/docs/getting-started
 ```ruby
 require 'dafiti'
 
+dafiti = Dafiti.session(
+  api_key: 'dedededefrfedwdw',
+  user_id: 'user@me.com'
+)
+
+products = dafiti.run(:get_products, Search: "some query")
+resp.head # Hash
+resp.body # Hash
+```
+
+Actions you can run are the lower-cased, underscored version of [available actions on Seller Center's API](https://sellerapi.sellercenter.net/docs/getproducts).
+
+Action parameters are the Hash version of XML inputs described in the API docs. For example, to [upload a product image](https://sellerapi.sellercenter.net/docs/image):
+
+```ruby
+image = dafiti.run(:image, {
+  ProductImage: {
+    SellerSku: "b2378adf",
+    Images: {
+      Image: [
+        "http://static.somecdn.com/rear.jpeg"
+      ]
+    }
+  }
+})
+
+puts image.request_id # "4d9c69e1-a581-4114-8ef1-210541b7c070"
+```
+
+## Custom server URL
+
+You can point the client to a custom server URL (for example a staging environment, a different Seller Center instance, a proxy, etc).
+
+```ruby
+dafiti = Dafiti.session(
+  api_key: 'dedededefrfedwdw',
+  user_id: 'user@me.com',
+  base_url: 'https://user:pass@some-server.com',
+)
+```
+
+### Async actions
+
+Some actions such as `ProductCreate` do not return inmediate confirmation, and instead create a "feed" which may or may not succeed in the future.
+The user is expected to poll the [feed status](https://sellerapi.sellercenter.net/docs/feedstatus) endpoint to check for progress.
+
+This gem encapsulates the process of running an action and polling its feed until it returns a successful of failed status.
+
+```ruby
+feed = dafiti.run_and_wait(:product_create, params)
+feed.status # "Finished" or "Error"
+feed.errors # Array of errors if status == "Error"
+```
+
+By default, this `#run_and_wait` polls up to 10 times in 1 second intervals, then gives up with a `Dafiti::Session::PollLimitReachedError` exception.
+
+Note that this method will block your Ruby thread while it waits for data.
+
+
+## Direct client usage
+
+`Dafiti::Session` is just a wrapper for a client and action objects. This happens under the hood:
+
+```ruby
+require 'dafiti'
+
 # instantiate the client with your credentials
 client = Dafiti::Client.new(
   api_key: 'dedededefrfedwdw',
@@ -19,12 +85,14 @@ client = Dafiti::Client.new(
 
 # an action
 # POST actions will build XML #body
-feed_list = Dafiti::Actions::GetProducts.new(
+feed_list = Dafiti::Actions::GetProducts.new
 
 resp = client.request(feed_list)
 resp.head # Hash
 resp.body # Hash
 ```
+
+This means that you can write your own action classes.
 
 ## ToDO
 
@@ -74,12 +142,11 @@ Put your credentials in `.config.yml` (see "Dev console" above). Now run arbitra
 bin/run my_script.rb
 ```
 
-A `client` object will be available in your scripts. Example:
+A `session` object will be available in your scripts. Example:
 
 ```ruby
 # my_script.rb
-feed_list = Dafiti::Actions::FeedList.new
-resp = client.request(feed_list)
+resp = session.run(:feed_list)
 
 puts resp.body
 ```
