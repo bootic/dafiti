@@ -60,7 +60,7 @@ module Dafiti
       end
 
       def head
-        @head ||= data.dig(top_level_key, :Head)
+        @head ||= data.dig(top_level_key, :Head) || {}
       end
 
       def body
