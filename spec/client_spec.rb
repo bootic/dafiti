@@ -110,6 +110,7 @@ RSpec.describe Dafiti::Client do
 
     resp = client.request(action)
     expect(resp).to be_a Dafiti::Responses::FeedDetail
+    expect(resp.ok?).to be false
     expect(resp.request_action).to eq 'FeedStatus'
     expect(resp.response_type).to eq 'FeedDetail'
     expect(resp.status).to eq 'Finished'

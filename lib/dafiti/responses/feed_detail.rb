@@ -6,6 +6,10 @@ module Dafiti
         detail.fetch(:Status)
       end
 
+      def ok?
+        !errors.any?
+      end
+
       def errors
         @errors ||= (
           errs = detail.fetch(:FeedErrors, {}).fetch(:Error, [])
