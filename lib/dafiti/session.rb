@@ -21,7 +21,7 @@ module Dafiti
     def run_and_wait(action_name, params = {})
       times = 0
       result = run(action_name, params)
-      raise "#{result.class.name} does not have #request_id" unless result.respond_to?(:request_id)
+      raise "#{result.inspect} does not have #request_id" unless result.respond_to?(:request_id)
       feed = run(:feed_status, FeedID: result.request_id)
       while PENDING_STATUSES.include?(feed.status)
         times += 1
