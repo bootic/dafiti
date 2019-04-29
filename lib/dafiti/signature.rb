@@ -1,6 +1,7 @@
 require 'time'
 require 'cgi'
 require 'openssl'
+require 'active_support/core_ext/hash'
 
 # https://sellerapi.sellercenter.net/docs/signing-requests
 module Dafiti
@@ -31,9 +32,7 @@ module Dafiti
     attr_reader :api_key, :user_id
 
     def encoded
-      @encoded ||= params.map {|k, v|
-        "#{CGI.escape(k.to_s)}=#{CGI.escape(v.to_s)}"
-      }.join('&')
+      @encoded ||= params.to_query
     end
   end
 end
