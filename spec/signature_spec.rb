@@ -43,20 +43,4 @@ RSpec.describe Dafiti::Signature do
     q = signature.query_string
     expect(q).to eq 'Action=FeedList&Format=XML&Timestamp=2015-07-01T11%3A11%3A11%2B00%3A00&UserID=look%40me.com&Version=1.0&Signature=3ceb8ed91049dfc718b0d2d176fb2ed0e5fd74f76c5971f34cdab48412476041'
   end
-
-  it 'handles array params correctly' do
-    signature = described_class.new(
-      api_key: 'b1bdb357ced10fe4e9a69840cdd4f0e9c03d77fe',
-      user_id: 'look@me.com',
-      params: {
-        'Action' => 'FeedList',
-        'Format' => 'JSON',
-        'SellerSKUList' => ['aa', 'bb', 'cc']
-      }
-    )
-
-    q = signature.query_string
-    expect(q).to eq 'Action=FeedList&Format=JSON&SellerSKUList%5B%5D=aa&SellerSKUList%5B%5D=bb&SellerSKUList%5B%5D=cc&Timestamp=2015-07-01T11%3A11%3A11%2B00%3A00&UserID=look%40me.com&Version=1.0&Signature=ed3335cfe53a8605361be2f962285526d32913d2dac14e35e23ffb1e80cf424c'
-  end
-
 end
