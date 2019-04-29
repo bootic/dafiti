@@ -30,9 +30,13 @@ module Dafiti
     private
     attr_reader :api_key, :user_id
 
+    # documentation about arrays: 
+    # Can either be a JSON array (e.g., [“E213”,”KI21”,”HT0”]) 
+    # or a serialized PHP array (e.g., a:3:{i:0;s:4:”E213”;i:1;s:4:”KI21”;i:2;s:3:”HT0”;}).
     def encoded
       @encoded ||= params.map {|k, v|
-        "#{CGI.escape(k.to_s)}=#{CGI.escape(v.to_s)}"
+        val = v.is_a?(Array) ? v.to_json : v.to_s
+        "#{CGI.escape(k.to_s)}=#{CGI.escape(val)}"
       }.join('&')
     end
   end
