@@ -18,10 +18,12 @@ module Dafiti
     end
 
     # run async action and wait for failed or successful feed result
-    def run_and_wait(action_name, params = {})
+    def run_and_wait(action_name, params = {}, &block)
       times = 0
       result = run(action_name, params)
       raise "#{result.inspect} does not have #request_id" unless result.respond_to?(:request_id)
+      yield result if block_given?
+      
       feed = run(:feed_status, FeedID: result.request_id)
       while PENDING_STATUSES.include?(feed.status)
         times += 1
