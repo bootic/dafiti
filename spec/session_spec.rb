@@ -27,7 +27,7 @@ RSpec.describe Dafiti::Session do
 
       expect do
         session.run_and_wait(:feed_list, FeedListId: 123)
-      end.to raise_error RuntimeError
+      end.to raise_error Dafiti::Session::EmptyRequestIdError
     end
 
     it "runs action" do

@@ -1,6 +1,7 @@
 module Dafiti
   class Session
     PollLimitReachedError = Class.new(StandardError)
+    EmptyRequestIdError = Class.new(StandardError)
 
     PENDING_STATUSES = ['Queued', 'Processing'].freeze
     WAIT_SECONDS = 1
@@ -21,7 +22,11 @@ module Dafiti
     def run_and_wait(action_name, params = {}, &block)
       times = 0
       result = run(action_name, params)
-      raise "#{result.inspect} does not have #request_id" unless result.respond_to?(:request_id)
+
+      unless result.respond_to?(:request_id)
+        raise EmptyRequestIdError, "#{result.inspect} does not have #request_id" 
+      end
+
       yield result if block_given?
       
       feed = run(:feed_status, FeedID: result.request_id)
