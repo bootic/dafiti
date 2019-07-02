@@ -112,7 +112,6 @@ module Dafiti
     end
 
     class ErrorResponse < Response
-
       def ok?
         false
       end

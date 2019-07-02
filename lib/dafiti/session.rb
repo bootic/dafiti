@@ -1,7 +1,8 @@
 module Dafiti
   class Session
-    PollLimitReachedError = Class.new(StandardError)
-    EmptyRequestIdError = Class.new(StandardError)
+    RequestError = Class.new(DafitiError)
+    PollLimitReachedError = Class.new(RequestError)
+    EmptyRequestIdError = Class.new(RequestError)
 
     PENDING_STATUSES = ['Queued', 'Processing'].freeze
     WAIT_SECONDS = 1
@@ -24,7 +25,7 @@ module Dafiti
       result = run(action_name, params)
 
       unless result.respond_to?(:request_id)
-        raise EmptyRequestIdError, "#{result.inspect} does not have #request_id" 
+        raise EmptyRequestIdError, "#{result.inspect} does not have #request_id"
       end
 
       yield result if block_given?
