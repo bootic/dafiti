@@ -5,7 +5,7 @@ module Dafiti
 
     PENDING_STATUSES = ['Queued', 'Processing'].freeze
     WAIT_SECONDS = 1
-    POLL_LIMIT = 10
+    POLL_LIMIT = 20
 
     def initialize(client)
       @client = client
@@ -28,7 +28,7 @@ module Dafiti
       end
 
       yield result if block_given?
-      
+
       feed = run(:feed_status, FeedID: result.request_id)
       while PENDING_STATUSES.include?(feed.status)
         times += 1
