@@ -11,7 +11,7 @@ module Dafiti
       user_id: user_id,
     }
     opts[:base_url] = base_url if base_url
-    client = Client.new(opts)
+    client = Client.new(**opts)
     Session.new(client)
   end
 end
