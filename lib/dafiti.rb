@@ -5,7 +5,7 @@ module Dafiti
 
   end
 
-  def self.session(api_key:, user_id:, base_url: nil)
+  def self.session(api_key:, user_id:, base_url: nil, user_agent: nil)
     opts = {
       api_key: api_key,
       user_id: user_id,
