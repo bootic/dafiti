@@ -5,13 +5,13 @@ module Dafiti
 
   end
 
-  def self.session(api_key:, user_id:, base_url: nil)
+  def self.session(api_key:, user_id:, base_url: nil, user_agent: nil)
     opts = {
       api_key: api_key,
       user_id: user_id,
     }
     opts[:base_url] = base_url if base_url
-    client = Client.new(opts)
+    client = Client.new(**opts)
     Session.new(client)
   end
 end
