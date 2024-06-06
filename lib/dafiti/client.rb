@@ -15,10 +15,11 @@ module Dafiti
       post: Net::HTTP::Post,
     }
 
-    def initialize(api_key:, user_id:, base_url: BASE_URL)
+    def initialize(api_key:, user_id:, base_url: BASE_URL, user_agent: UA)
       @api_key = api_key
       @user_id = user_id
       @base_url = base_url
+      @user_agent = user_agent
     end
 
     def request(action, &block)
@@ -35,7 +36,7 @@ module Dafiti
       http.use_ssl = true
       request = HTTP_METHODS.fetch(action.verb).new(uri.request_uri)
       request['Content-Type'] = CONTENT_TYPE
-      request['User-Agent'] = UA
+      request['User-Agent'] = @user_agent
       if uri.user && uri.password
         request.basic_auth uri.user, uri.password
       end
